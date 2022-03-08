@@ -25,6 +25,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
+
+    FlutterNativeHelper.instance.setOnNativeListener(
+        method: FlutterNativeConstant.methodDownloadProgress,
+        result: (progress) {
+          if (progress is double) {
+            print("lxlx progress: $progress");
+          }
+        });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -55,14 +63,26 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Running on: $_platformVersion\n'),
-              _buildButton("控制手机震动", () async {
-                FlutterNativeHelper.instance.callPhoneToShake();
+              _buildButton("", () async {
+                var playSystemRingtone = await FlutterNativeHelper.instance.callPhoneToShake();
+
+              }),
+              _buildButton("暂停播放", () async {
+                var stopSystemRingtone = await FlutterNativeHelper.instance.stopSystemRingtone();
+                print("lxlx stopSystemRingtone: $stopSystemRingtone");
+              }),
+              _buildButton("得到铃声列表", () async {
+                final list = await FlutterNativeHelper.instance.getSystemRingtoneList(FlutterNativeConstant.systemRingtoneTypeNotification);
+                for (var value in list) {
+                  print("lxlx ringtoneTitle: ${value.ringtoneTitle}, ${value.ringtoneUri}");
+                }
               }),
               _buildButton("下载并安装apk", () async {
-                await FlutterNativeHelper.instance.downloadAndInstallApk(
+                final filePath = await FlutterNativeHelper.instance.downloadFile(
                     fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
                     fileDirectory: "updateApk",
                     fileName: "newApk.apk");
+                FlutterNativeHelper.instance.installApk(filePath);
               }),
             ],
           ),

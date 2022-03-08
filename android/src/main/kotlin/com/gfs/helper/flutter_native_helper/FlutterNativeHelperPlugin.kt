@@ -1,15 +1,19 @@
 package com.gfs.helper.flutter_native_helper
 
 import android.app.Activity
+import android.net.Uri
 import androidx.annotation.NonNull
 import androidx.lifecycle.*
 import com.fs.freedom.basic.helper.DownloadHelper
+import com.fs.freedom.basic.helper.MediaHelper
 import com.fs.freedom.basic.helper.SystemHelper
 import com.fs.freedom.basic.listener.CommonResultListener
+import com.fs.freedom.basic.model.SystemRingtoneModel
 import com.fs.freedom.basic.util.ToastUtil
 import com.gfs.helper.flutter_native_helper.comments.CustomLifecycleObserver
 import com.gfs.helper.flutter_native_helper.comments.InstallApkState
 import com.gfs.helper.flutter_native_helper.model.InstallApkModel
+import com.google.gson.Gson
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -31,7 +35,6 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
   private val mLifecycleObserver = object : CustomLifecycleObserver {
     override fun onResume() {
       //校验是否获取到了权限
-      //todo 解决小新Pad上同意权限后应用进程被关闭问题
       if (mInstallApkModel.isIntoOpenPermissionPage) {
         when (mInstallApkModel.currentState) {
           InstallApkState.INSTALL -> {
@@ -72,6 +75,18 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       "downloadAndInstallApk" -> {
         downloadAndInstallApk(arguments, result)
       }
+      "playSystemRingtone" -> {
+        playSystemRingtone(arguments, result)
+      }
+      "stopSystemRingtone" -> {
+        stopSystemRingtone(result)
+      }
+      "isPlayingSystemRingtone" -> {
+        isPlayingSystemRingtone(result)
+      }
+      "getSystemRingtoneList" -> {
+        getSystemRingtoneList(arguments, result)
+      }
       else -> {
         result.notImplemented()
       }
@@ -79,12 +94,70 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
   }
 
   /**
+   * 获取系统铃声/通知/警报
+   */
+  private fun getSystemRingtoneList(arguments: Map<*, *>?, result: Result) {
+    val ringtoneType = arguments?.get("systemRingtoneType") as Int?
+    if (ringtoneType == null) {
+      result.error("getSystemRingtoneList", "ringtoneType must not be null!", "")
+      return
+    }
+    MediaHelper.getSystemRingtoneList(mActivity, ringtoneType, object : CommonResultListener<SystemRingtoneModel> {
+      override fun onSuccess(list: List<SystemRingtoneModel>) {
+        result.success(Gson().toJson(list))
+      }
+
+      override fun onEmpty() {
+        result.error("getSystemRingtoneList", "empty", "")
+      }
+
+      override fun onError(message: String) {
+        result.error("getSystemRingtoneList", message, "")
+      }
+    })
+  }
+
+  /**
+   * 播放系统铃声/通知/警报
+   */
+  private fun playSystemRingtone(arguments: Map<*, *>?, result: Result) {
+    val assignUri = arguments?.get("assignUri") as String?
+    val uri = if (assignUri != null && assignUri.isNotEmpty()) {
+      Uri.parse(assignUri)
+    } else {
+      null
+    }
+    val playResult = MediaHelper.playSystemRingtone(mActivity, uri)
+    if (playResult) {
+      result.success(playResult)
+    } else {
+      result.error("playSystemRingtone", "play failed", "")
+    }
+  }
+
+  /**
+   * 停止当前正在播放的铃声/通知/警报
+   * 与 [playSystemRingtone] 对应
+   */
+  private fun stopSystemRingtone(result: Result) {
+    val stopResult = MediaHelper.stopSystemRingtone()
+    result.success(stopResult)
+  }
+
+  /**
+   * 当前铃声是否在播放
+   */
+  private fun isPlayingSystemRingtone(result: Result) {
+    result.success(MediaHelper.isRingtonePlaying)
+  }
+
+  /**
    * 控制手机震动
    */
   private fun callPhoneToShake(arguments: Map<*, *>?, result: Result) {
-    val millSeconds = arguments?.get("millSeconds") as Long? ?: 500
+    val millSeconds = arguments?.get("millSeconds") as Int? ?: 500
     val amplitude = arguments?.get("amplitude") as Int?
-    val callPhoneToShake = SystemHelper.callPhoneToShake(mActivity, millSeconds, amplitude)
+    val callPhoneToShake = SystemHelper.callPhoneToShake(mActivity, millSeconds.toLong(), amplitude)
     if (callPhoneToShake) {
       result.success(true)
     } else {
