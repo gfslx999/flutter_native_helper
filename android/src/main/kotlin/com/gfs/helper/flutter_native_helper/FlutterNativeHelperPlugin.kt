@@ -6,8 +6,9 @@ import androidx.lifecycle.*
 import com.fs.freedom.basic.helper.DownloadHelper
 import com.fs.freedom.basic.helper.SystemHelper
 import com.fs.freedom.basic.listener.CommonResultListener
-import com.fs.freedom.basic.util.LogUtil
 import com.fs.freedom.basic.util.ToastUtil
+import com.gfs.helper.flutter_native_helper.comments.CustomLifecycleObserver
+import com.gfs.helper.flutter_native_helper.comments.InstallApkState
 import com.gfs.helper.flutter_native_helper.model.InstallApkModel
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -30,7 +31,6 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
   private val mLifecycleObserver = object : CustomLifecycleObserver {
     override fun onResume() {
       //校验是否获取到了权限
-      //todo 需要添加同意权限弹窗
       //todo 解决小新Pad上同意权限后应用进程被关闭问题
       if (mInstallApkModel.isIntoOpenPermissionPage) {
         when (mInstallApkModel.currentState) {
@@ -50,8 +50,6 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     mChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_native_helper")
     mChannel.setMethodCallHandler(this)
   }
-
-
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     val arguments = call.arguments as Map<*, *>?
@@ -147,13 +145,11 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       isDeleteOriginalFile = isDeleteOriginalFile,
       commonResultListener = object :CommonResultListener<File> {
         override fun onStart() {
-          ToastUtil.showToast(mActivity, "正在下载，请稍后")
           mInstallApkModel.isIntoOpenPermissionPage = false
         }
 
         override fun onError(message: String) {
           if (message == SystemHelper.OPEN_INSTALL_PACKAGE_PERMISSION) {
-            ToastUtil.showToast(mActivity, "请同意该权限")
             mInstallApkModel.isIntoOpenPermissionPage = true
           } else {
             result?.error("0", message, "")
@@ -171,9 +167,7 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
    * 更新下载进度
    */
   private fun updateDownloadProgress(progress: Float) {
-    //todo 待在flutter端添加监听
-    ToastUtil.showToast(mActivity,"当前进度: $progress")
-    mChannel.invokeMethod("updateDownloadProgress", progress)
+    mChannel.invokeMethod("resultDownloadProgress", progress)
   }
 
   /**

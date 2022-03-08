@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_native_helper/flutter_native_constant.dart';
 
 class FlutterNativeHelper {
 
@@ -10,7 +11,6 @@ class FlutterNativeHelper {
   static FlutterNativeHelper get instance => _getInstance();
   static FlutterNativeHelper? _instance;
   final MethodChannel _channel = const MethodChannel('flutter_native_helper');
-
 
   static FlutterNativeHelper _getInstance() {
     _instance ??= FlutterNativeHelper.internal();
@@ -55,6 +55,9 @@ class FlutterNativeHelper {
   /// 双层文件夹就为 'updateApkDirectory/new'，无需传递首、尾斜杠
   /// [fileName] 文件名称，示例：newApk.apk(注意要拼接后缀.apk或.xxx)，无需传递 '/'
   /// [isDeleteOriginalFile] 如果本地存在相同文件，是否删除已存在文件，默认为true
+  ///
+  /// 如需获取下载进度回调，调用[setOnNativeListener]，method为 [FlutterNativeConstant.resultDownloadProgress]，
+  /// 回调值为 'double' 类型
   Future<String> downloadFile({
     required String fileUrl,
     required String fileDirectory,
@@ -70,13 +73,7 @@ class FlutterNativeHelper {
     return await _channel.invokeMethod("downloadFile", arguments) ?? "";
   }
 
-  /// 下载文件到沙盒目录下
-  /// [fileUrl] 文件远程地址
-  /// [fileDirectory] 在沙盒目录下的文件夹路径
-  /// 如果你想在沙盒目录下创建一个 'updateApkDirectory' ，即只需要传递 'updateApkDirectory'，native端负责拼接 '/' 斜杠，
-  /// 双层文件夹就为 'updateApkDirectory/new'，无需传递首、尾斜杠
-  /// [fileName] 文件名称，示例：newApk.apk(注意要拼接后缀.apk或.xxx)，无需传递 '/'
-  /// [isDeleteOriginalFile] 如果本地存在相同文件，是否删除已存在文件，默认为true
+  ///注释详见 [downloadFile]
   Future<void> downloadAndInstallApk({
     required String fileUrl,
     required String fileDirectory,
@@ -90,6 +87,23 @@ class FlutterNativeHelper {
       "isDeleteOriginalFile": isDeleteOriginalFile,
     };
     await _channel.invokeMethod("downloadAndInstallApk", arguments) ?? "";
+  }
+
+  /// 监听Native端发送的信息
+  void setOnNativeListener({
+    required String method,
+    required Function(dynamic) result,
+  }) {
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == method && call.arguments != null) {
+        result(call.arguments);
+      }
+    });
+  }
+
+  /// 销毁对 Native 端的监听
+  void disposeNativeListener() {
+    _channel.setMethodCallHandler(null);
   }
 
 }

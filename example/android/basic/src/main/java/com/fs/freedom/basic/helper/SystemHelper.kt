@@ -3,23 +3,28 @@ package com.fs.freedom.basic.helper
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.app.Service
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.text.TextUtils
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
+import com.fs.freedom.basic.R
 import com.fs.freedom.basic.constant.CommonConstant
 import com.fs.freedom.basic.expand.smartLog
 import com.fs.freedom.basic.listener.CommonResultListener
 import com.fs.freedom.basic.util.LogUtil
 import com.permissionx.guolindev.PermissionX
 import com.permissionx.guolindev.callback.RequestCallback
+import com.permissionx.guolindev.dialog.DefaultDialog
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
@@ -80,6 +85,8 @@ object SystemHelper : Activity() {
 
     /**
      * 下载并安装apk
+     *
+     * 流程 -> 先校验是否拥有权限 -> 获取到权限后下载apk -> 下载完成后自动执行安装逻辑
      */
     @SuppressLint("QueryPermissionsNeeded")
     fun downloadAndInstallApk(
@@ -106,7 +113,12 @@ object SystemHelper : Activity() {
                 val isHasPermission = activity.packageManager?.canRequestPackageInstalls() ?: false
                 if (!isHasPermission) {
                     commonResultListener.onError(OPEN_INSTALL_PACKAGE_PERMISSION)
-                    intoManageUnknownAppPage(activity)
+                    intoManageUnknownAppPage(
+                        activity,
+                        explainContent = explainContent,
+                        positiveText = positiveText,
+                        negativeText = negativeText
+                    )
                     return
                 }
             }
@@ -192,7 +204,13 @@ object SystemHelper : Activity() {
                     }
             } else {
                 commonResultListener?.onError(OPEN_INSTALL_PACKAGE_PERMISSION)
-                intoManageUnknownAppPage(activity, apkFile)
+                intoManageUnknownAppPage(
+                    activity,
+                    apkFile,
+                    explainContent = explainContent,
+                    positiveText = positiveText,
+                    negativeText = negativeText
+                )
             }
         } else {
             toInstallApk(activity, apkFile)
@@ -200,23 +218,54 @@ object SystemHelper : Activity() {
     }
 
     /**
-     * 进入管理 '允许安装其他应用' 权限界面
+     * 弹出弹窗提示，确认后，进入管理 '允许安装其他应用' 权限界面
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun intoManageUnknownAppPage(activity: Activity, apkFile: File? = null) {
-        try {
-            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
-            intent.data = Uri.parse("package:${activity.packageName}")
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            activity.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            smartLog { e.printStackTrace() }
-            if (apkFile != null) {
-                toInstallApk(activity, apkFile)
+    private fun intoManageUnknownAppPage(
+        activity: Activity,
+        apkFile: File? = null,
+        explainContent: String = "您必须同意 '应用内安装其他应用' 权限才能完成升级",
+        positiveText: String = "确认",
+        negativeText: String = "取消",
+    ) {
+        //弹出弹窗提示
+        val defaultDialog = DefaultDialog(
+            activity,
+            listOf(Manifest.permission.REQUEST_INSTALL_PACKAGES),
+            message = explainContent,
+            positiveText = positiveText,
+            negativeText = negativeText,
+            -1,
+            -1
+        )
+        defaultDialog.show()
+
+        defaultDialog.positiveButton.setOnClickListener {
+            defaultDialog.dismiss()
+            try {
+                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                intent.data = Uri.parse("package:${activity.packageName}")
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                activity.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                smartLog { e.printStackTrace() }
+                if (apkFile != null) {
+                    toInstallApk(activity, apkFile)
+                }
             }
+        }
+        defaultDialog.negativeButton?.setOnClickListener {
+            defaultDialog.dismiss()
         }
     }
 
+    /**
+     * ========================== PrivateApi ==========================
+     */
+
+    /**
+     * 进入系统安装应用界面
+     */
     @SuppressLint("SetWorldReadable", "SetWorldWritable")
     private fun toInstallApk(activity: Activity, apkFile: File) {
         try {

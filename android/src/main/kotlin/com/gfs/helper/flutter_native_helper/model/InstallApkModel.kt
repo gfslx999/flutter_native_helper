@@ -1,6 +1,6 @@
 package com.gfs.helper.flutter_native_helper.model
 
-import com.gfs.helper.flutter_native_helper.InstallApkState
+import com.gfs.helper.flutter_native_helper.comments.InstallApkState
 import io.flutter.plugin.common.MethodChannel
 
 data class InstallApkModel(

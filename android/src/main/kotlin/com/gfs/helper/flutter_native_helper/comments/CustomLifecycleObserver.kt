@@ -1,4 +1,4 @@
-package com.gfs.helper.flutter_native_helper
+package com.gfs.helper.flutter_native_helper.comments
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver

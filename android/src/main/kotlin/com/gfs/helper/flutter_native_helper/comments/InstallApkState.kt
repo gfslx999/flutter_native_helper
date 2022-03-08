@@ -1,4 +1,4 @@
-package com.gfs.helper.flutter_native_helper
+package com.gfs.helper.flutter_native_helper.comments
 
 enum class InstallApkState {
     //仅安装
