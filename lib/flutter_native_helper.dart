@@ -47,6 +47,23 @@ class FlutterNativeHelper {
     await _channel.invokeMethod("callPhoneToShake", arguments);
   }
 
+  /// 下载并安装apk ～ 一条龙服务
+  /// 参数注释参见 [downloadFile]
+  Future<void> downloadAndInstallApk({
+    required String fileUrl,
+    required String fileDirectory,
+    required String fileName,
+    bool isDeleteOriginalFile = true,
+  }) async {
+    final arguments = <String, dynamic>{
+      "fileUrl": fileUrl,
+      "fileDirectory": fileDirectory,
+      "fileName": fileName,
+      "isDeleteOriginalFile": isDeleteOriginalFile,
+    };
+    await _channel.invokeMethod("downloadAndInstallApk", arguments) ?? "";
+  }
+
   /// 安装apk，内部已处理 '允许应用内安装其他应用' 权限
   /// [filePath] 要安装的apk绝对路径
   Future<void> installApk(String filePath) async {
@@ -56,13 +73,19 @@ class FlutterNativeHelper {
     await _channel.invokeMethod("installApk", arguments);
   }
 
-  /// 下载文件到沙盒目录下
+  /// 下载文件到⚠️沙盒目录下（仅能下载到沙盒目录下）
+  ///
   /// [fileUrl] 文件远程地址
   /// [fileDirectory] 在沙盒目录下的文件夹路径
-  /// 如果你想在沙盒目录下创建一个 'updateApkDirectory' ，即只需要传递 'updateApkDirectory'，native端负责拼接 '/' 斜杠，
-  /// 双层文件夹就为 'updateApkDirectory/new'，无需传递首、尾斜杠
   /// [fileName] 文件名称，示例：newApk.apk(注意要拼接后缀.apk或.xxx)，无需传递 '/'
   /// [isDeleteOriginalFile] 如果本地存在相同文件，是否删除已存在文件，默认为true
+  ///
+  /// 关于 [fileDirectory]、[fileName] 的说明
+  /// 如沙盒目录为：/data/user/0/com.xxxxx.flutter_native_helper_example/files
+  /// [fileDirectory] 为 'updateApk' ，[fileName] 为 'new.apk'，
+  /// 那么最终生成的路径就是: /data/user/0/com.xxxxx.flutter_native_helper_example/files/updateApk/new.apk
+  /// 即你无需关心反斜杠拼接，如果 [fileDirectory] 想要为两级，那就为 'updateApk/second'，
+  /// 最终路径就为：/data/user/0/com.xxxxx.flutter_native_helper_example/files/updateApk/second/new.apk
   ///
   /// 如需获取下载进度回调，调用[setOnNativeListener]，method为 [FlutterNativeConstant.methodDownloadProgress]，
   /// 回调值为 'double' 类型
@@ -84,22 +107,6 @@ class FlutterNativeHelper {
       debugPrint("downloadFile.error: $e");
       return "";
     }
-  }
-
-  ///注释详见 [downloadFile]
-  Future<void> downloadAndInstallApk({
-    required String fileUrl,
-    required String fileDirectory,
-    required String fileName,
-    bool isDeleteOriginalFile = true,
-  }) async {
-    final arguments = <String, dynamic>{
-      "fileUrl": fileUrl,
-      "fileDirectory": fileDirectory,
-      "fileName": fileName,
-      "isDeleteOriginalFile": isDeleteOriginalFile,
-    };
-    await _channel.invokeMethod("downloadAndInstallApk", arguments) ?? "";
   }
 
   /// 获取系统铃声/通知/警报列表

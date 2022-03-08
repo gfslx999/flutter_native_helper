@@ -88,13 +88,14 @@ class _MyAppState extends State<MyApp> {
                   print("lxlx realPath: $realPath");
                 }
               }),
-              // _buildButton("下载并安装apk", () async {
-              //   final filePath = await FlutterNativeHelper.instance.downloadFile(
-              //       fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
-              //       fileDirectory: "updateApk",
-              //       fileName: "newApk.apk");
-              //   FlutterNativeHelper.instance.installApk(filePath);
-              // }),
+              _buildButton("下载并安装apk", () async {
+                final filePath = await FlutterNativeHelper.instance.downloadFile(
+                    fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
+                    fileDirectory: "updateApk",
+                    fileName: "newApk.apk");
+                print("lxlx apkPath: $filePath");
+                FlutterNativeHelper.instance.installApk(filePath);
+              }),
             ],
           ),
         ),
