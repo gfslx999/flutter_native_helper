@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.annotation.NonNull
 import androidx.lifecycle.*
 import com.fs.freedom.basic.helper.DownloadHelper
+import com.fs.freedom.basic.helper.FileHelper
 import com.fs.freedom.basic.helper.MediaHelper
 import com.fs.freedom.basic.helper.SystemHelper
 import com.fs.freedom.basic.listener.CommonResultListener
@@ -87,9 +88,29 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       "getSystemRingtoneList" -> {
         getSystemRingtoneList(arguments, result)
       }
+      "transformUriToRealPath" -> {
+        transformUriToRealPath(arguments, result)
+      }
       else -> {
         result.notImplemented()
       }
+    }
+  }
+
+  /**
+   * 将Uri转换为真实路径
+   */
+  private fun transformUriToRealPath(arguments: Map<*, *>?, result: Result) {
+    val targetUri = arguments?.get("targetUri") as String? ?: ""
+    if (targetUri.isEmpty()) {
+      result.error("transformUriToRealPath", "targetUri is must not be null or empty" ,"")
+      return
+    }
+    val realPath = FileHelper.transformUriToRealPath(mActivity, Uri.parse(targetUri))
+    if (realPath.isNotEmpty()) {
+      result.success(realPath)
+    } else {
+      result.error("transformUriToRealPath", "transform failed","")
     }
   }
 

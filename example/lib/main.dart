@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_helper/flutter_native_helper.dart';
 import 'package:flutter_native_helper/flutter_native_constant.dart';
+import 'package:flutter_native_helper/model/system_ringtone_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,6 +21,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+
+  SystemRingtoneModel? _ringtoneModel;
 
   @override
   void initState() {
@@ -63,8 +66,9 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Running on: $_platformVersion\n'),
-              _buildButton("", () async {
-                var playSystemRingtone = await FlutterNativeHelper.instance.callPhoneToShake();
+              _buildButton("开始播放", () async {
+                var playSystemRingtone = await FlutterNativeHelper.instance.playSystemRingtone(
+                    assignUri: _ringtoneModel?.ringtoneUri);
 
               }),
               _buildButton("暂停播放", () async {
@@ -76,14 +80,21 @@ class _MyAppState extends State<MyApp> {
                 for (var value in list) {
                   print("lxlx ringtoneTitle: ${value.ringtoneTitle}, ${value.ringtoneUri}");
                 }
+                _ringtoneModel = list[3];
               }),
-              _buildButton("下载并安装apk", () async {
-                final filePath = await FlutterNativeHelper.instance.downloadFile(
-                    fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
-                    fileDirectory: "updateApk",
-                    fileName: "newApk.apk");
-                FlutterNativeHelper.instance.installApk(filePath);
+              _buildButton("转换为真实路径", () async {
+                if (_ringtoneModel != null) {
+                  var realPath = await FlutterNativeHelper.instance.transformUriToRealPath(_ringtoneModel!.ringtoneUri);
+                  print("lxlx realPath: $realPath");
+                }
               }),
+              // _buildButton("下载并安装apk", () async {
+              //   final filePath = await FlutterNativeHelper.instance.downloadFile(
+              //       fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
+              //       fileDirectory: "updateApk",
+              //       fileName: "newApk.apk");
+              //   FlutterNativeHelper.instance.installApk(filePath);
+              // }),
             ],
           ),
         ),

@@ -152,6 +152,23 @@ class FlutterNativeHelper {
     }
   }
 
+  /// 将 Uri 转换为真实路径
+  Future<String> transformUriToRealPath(String? targetUri) async {
+    if (targetUri == null || targetUri.isEmpty) {
+      debugPrint("transformUriToRealPath.error: targetUri is null or empty");
+      return "";
+    }
+    try {
+      var arguments = <String, dynamic>{
+        "targetUri": targetUri
+      };
+      return await _channel.invokeMethod("transformUriToRealPath", arguments);
+    } catch (e) {
+      debugPrint("transformUriToRealPath.error: $e");
+      return "";
+    }
+  }
+
   /// 监听Native端发送的信息
   void setOnNativeListener({
     required String method,
