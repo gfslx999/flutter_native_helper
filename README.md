@@ -58,7 +58,7 @@ class FlutterNativeConstant {
 /// 回调值为 'double' 类型
 
 /// 注意⚠️：此方法没有成功回调，即不需要异步等待
-void downloadAndInstallApk({
+FlutterNativeHelper.instance.downloadAndInstallApk({
   required String fileUrl,
   required String fileDirectory,
   required String fileName,
@@ -74,12 +74,12 @@ Future<List<SystemRingtoneModel>> getSystemRingtoneList(
 ) async {}
 
 /// 播放系统铃声/通知/警报，如为空则播放系统默认铃声
-Future<bool> playSystemRingtone({String? assignUri}) async {}
+FlutterNativeHelper.instance.playSystemRingtone({String? assignUri}) async {}
 
 /// 暂停播放系统铃声/通知/警报
 ///
 /// 与[playSystemRingtone]对应
-Future<bool> stopSystemRingtone() async {}
+FlutterNativeHelper.instance.stopSystemRingtone() async {}
 
 ```
 其余API可自行查看，包含详细注释
