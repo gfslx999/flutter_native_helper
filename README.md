@@ -9,6 +9,8 @@
 * 播放、暂停铃声/通知/警报
 * 其余部分功能，可自行查看源码，有详细注释
 
+[效果在这里](https://github.com/gfslx999/flutter_native_helper/blob/master/example/README.md)
+
 ## 一、导入
 
 * 在pubspec.yaml内

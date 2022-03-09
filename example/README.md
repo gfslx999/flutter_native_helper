@@ -1,16 +1,9 @@
-# flutter_native_helper_example
+## 效果演示
 
-Demonstrates how to use the flutter_native_helper plugin.
+### 一、下载并安装apk，展示不同版本效果(由于是模拟器，所以会安装失败)
 
-## Getting Started
+![image](https://github.com/gfslx999/flutter_native_helper/blob/master/example/assets/effect_android_10.gif)
+![image](https://github.com/gfslx999/flutter_native_helper/blob/master/example/assets/effect_android_11.gif)
+![image](https://github.com/gfslx999/flutter_native_helper/blob/master/example/assets/effect_android_12.gif)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+注意：由于 Android 11版本行为变更，导致同意 '允许安装应用' 权限后会闪退，这个问题已经在Android 12上解决
