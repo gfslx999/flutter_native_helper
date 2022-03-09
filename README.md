@@ -8,18 +8,18 @@
 
 [效果在这里](https://github.com/gfslx999/flutter_native_helper/blob/master/example/README.md)
 
-## Installing
+## 安装
 
-In pubspec.yaml.
+在 pubspec.yaml 内.
 
 ```kotlin
 dependencies:
-flutter_native_helper: ^0.1
+  flutter_native_helper: ^0.1
 ```
 
-## Import
+## 导入
 
-In the class you want to use.
+在你要使用的类中.
 
 ```kotlin
 import 'package:flutter_native_helper/flutter_native_helper.dart';
