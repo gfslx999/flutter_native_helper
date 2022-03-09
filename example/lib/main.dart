@@ -79,14 +79,13 @@ class _MyAppState extends State<MyApp> {
               _buildButton("开始播放", () async {
                 var playSystemRingtone = await FlutterNativeHelper.instance.playSystemRingtone(
                     assignUri: _ringtoneModel?.ringtoneUri);
-
               }),
               _buildButton("暂停播放", () async {
                 var stopSystemRingtone = await FlutterNativeHelper.instance.stopSystemRingtone();
                 print("lxlx stopSystemRingtone: $stopSystemRingtone");
               }),
               _buildButton("得到铃声列表", () async {
-                final list = await FlutterNativeHelper.instance.getSystemRingtoneList(FlutterNativeConstant.systemRingtoneTypeNotification);
+                final List<SystemRingtoneModel> list = await FlutterNativeHelper.instance.getSystemRingtoneList(FlutterNativeConstant.systemRingtoneTypeNotification);
                 for (var value in list) {
                   print("lxlx ringtoneTitle: ${value.ringtoneTitle}, ${value.ringtoneUri}");
                 }
