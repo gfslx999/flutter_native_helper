@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_helper/flutter_native_helper.dart';
-import 'package:flutter_native_helper/flutter_native_constant.dart';
-import 'package:flutter_native_helper/model/system_ringtone_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +32,11 @@ class _MyAppState extends State<MyApp> {
         method: FlutterNativeConstant.methodDownloadProgress,
         result: (progress) {
           if (progress is double) {
-            print("lxlx progress: $progress");
+            if (progress < 100) {
+              EasyLoading.showProgress(progress / 100, status: "下载中");
+            } else {
+              EasyLoading.showSuccess("下载成功");
+            }
           }
         });
   }
@@ -57,6 +60,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: EasyLoading.init(),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
@@ -65,6 +69,12 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              _buildButton("下载并安装apk", () {
+                FlutterNativeHelper.instance.downloadAndInstallApk(
+                    fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
+                    fileDirectory: "updateApk",
+                    fileName: "newApk.apk");
+              }),
               Text('Running on: $_platformVersion\n'),
               _buildButton("开始播放", () async {
                 var playSystemRingtone = await FlutterNativeHelper.instance.playSystemRingtone(
@@ -87,14 +97,6 @@ class _MyAppState extends State<MyApp> {
                   var realPath = await FlutterNativeHelper.instance.transformUriToRealPath(_ringtoneModel!.ringtoneUri);
                   print("lxlx realPath: $realPath");
                 }
-              }),
-              _buildButton("下载并安装apk", () async {
-                final filePath = await FlutterNativeHelper.instance.downloadFile(
-                    fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
-                    fileDirectory: "updateApk",
-                    fileName: "newApk.apk");
-                print("lxlx apkPath: $filePath");
-                FlutterNativeHelper.instance.installApk(filePath);
               }),
             ],
           ),

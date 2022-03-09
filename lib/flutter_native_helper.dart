@@ -1,3 +1,6 @@
+library flutter_native_hlper;
+export 'package:flutter_native_helper/flutter_native_constant.dart';
+export 'package:flutter_native_helper/model/system_ringtone_model.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -37,6 +40,7 @@ class FlutterNativeHelper {
   }
 
   /// 控制设备震动
+  ///
   /// [millSeconds] 震动时长，默认为500
   /// [amplitude] 震动强度 1~255之间
   Future<void> callPhoneToShake({int? millSeconds, int? amplitude}) async {
@@ -48,8 +52,10 @@ class FlutterNativeHelper {
   }
 
   /// 下载并安装apk ～ 一条龙服务
+  ///
+  /// 注意：此方法没有成功回调，即不需要异步等待
   /// 参数注释参见 [downloadFile]
-  Future<void> downloadAndInstallApk({
+  void downloadAndInstallApk({
     required String fileUrl,
     required String fileDirectory,
     required String fileName,
@@ -61,7 +67,7 @@ class FlutterNativeHelper {
       "fileName": fileName,
       "isDeleteOriginalFile": isDeleteOriginalFile,
     };
-    await _channel.invokeMethod("downloadAndInstallApk", arguments) ?? "";
+    await _channel.invokeMethod("downloadAndInstallApk", arguments);
   }
 
   /// 安装apk，内部已处理 '允许应用内安装其他应用' 权限
@@ -110,6 +116,7 @@ class FlutterNativeHelper {
   }
 
   /// 获取系统铃声/通知/警报列表
+  ///
   /// [systemRingtoneType] 铃声类型，参见[FlutterNativeConstant]
   Future<List<SystemRingtoneModel>> getSystemRingtoneList(int systemRingtoneType) async {
     final arguments = <String, dynamic>{
@@ -139,6 +146,7 @@ class FlutterNativeHelper {
   }
 
   /// 暂停播放系统铃声/通知/警报
+  ///
   /// 与[playSystemRingtone]对应
   Future<bool> stopSystemRingtone() async {
     try {
