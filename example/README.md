@@ -6,7 +6,7 @@ Provides functions to the Flutter, from Android：
 * Get system ringtone/notification/alarm list.
 * Play system ringtone/notification/alarm.
 
-[English document](https://github.com/gfslx999/flutter_native_helper/blob/master/example/README.md)
+[中文文档](https://github.com/gfslx999/flutter_native_helper)
 
 [Preview GIF](https://github.com/gfslx999/flutter_native_helper/blob/master/example/PREVIEW.md)
 
