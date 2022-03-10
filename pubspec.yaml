@@ -1,6 +1,6 @@
 name: flutter_native_helper
 description: 为 Flutter 端封装 Android 功能，包括：应用内安装
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/gfslx999/flutter_native_helper
 
 environment:
