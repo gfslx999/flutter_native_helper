@@ -1,5 +1,9 @@
 ## 0.0.1
 
-* 应用内升级
-* 获取系统铃声/通知/警报列表
-* 播放、暂停铃声/通知/警报
+* 应用内升级 - App update
+* 获取系统铃声/通知/警报列表 - Get system ringtone list
+* 播放、暂停铃声/通知/警报 = Play or stop system ringtone
+
+### 0.0.2
+
+* 版本号变更 - Version change
