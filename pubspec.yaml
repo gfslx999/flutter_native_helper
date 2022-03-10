@@ -1,6 +1,6 @@
 name: flutter_native_helper
-description: 为Flutter端封装Android功能，包括：下载并安装apk(已处理权限)、安装apk、获取系统通知/铃声/警报声列表、播放系统铃声，旨在解放双手
-version: 0.0.1
+description: 为 Flutter 端封装 Android 功能，包括：应用内安装
+version: 0.0.2
 homepage: https://github.com/gfslx999/flutter_native_helper
 
 environment:
