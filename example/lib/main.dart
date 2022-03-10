@@ -37,7 +37,8 @@ class _MyAppState extends State<MyApp> {
               if (stringProgress.length > 5) {
                 stringProgress = stringProgress.substring(0, 5);
               }
-              EasyLoading.showProgress(progress / 100, status: "下载中 $stringProgress%");
+              EasyLoading.showProgress(progress / 100,
+                  status: "下载中 $stringProgress%");
             } else {
               EasyLoading.showSuccess("下载成功");
             }
@@ -49,8 +50,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String platformVersion;
     try {
-      platformVersion =
-          await FlutterNativeHelper.instance.platformVersion ?? 'Unknown platform version';
+      platformVersion = await FlutterNativeHelper.instance.platformVersion ??
+          'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -76,18 +77,23 @@ class _MyAppState extends State<MyApp> {
               Text('Running on: $_platformVersion\n'),
               _buildButton("下载并安装apk", () {
                 FlutterNativeHelper.instance.downloadAndInstallApk(
-                    fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
+                    fileUrl:
+                        "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
                     fileDirectory: "updateApk",
                     fileName: "newApk.apk");
               }),
               _buildButton('进入应用详情页', () async {
-                final intoResult = await FlutterNativeHelper.instance.intoAppSettingDetail();
+                final intoResult =
+                    await FlutterNativeHelper.instance.intoAppSettingDetail();
                 debugPrint("intoResult: $intoResult");
               }),
               _buildButton("得到铃声列表", () async {
-                final List<SystemRingtoneModel> list = await FlutterNativeHelper.instance.getSystemRingtoneList(FlutterNativeConstant.systemRingtoneTypeNotification);
+                final List<SystemRingtoneModel> list =
+                    await FlutterNativeHelper.instance.getSystemRingtoneList(
+                        FlutterNativeConstant.systemRingtoneTypeNotification);
                 for (var value in list) {
-                  print("lxlx ringtoneTitle: ${value.ringtoneTitle}, ${value.ringtoneUri}");
+                  print(
+                      "lxlx ringtoneTitle: ${value.ringtoneTitle}, ${value.ringtoneUri}");
                 }
                 _ringtoneModel = list[3];
               }),
@@ -101,11 +107,13 @@ class _MyAppState extends State<MyApp> {
   Widget _buildButton(String text, Function function) {
     return MaterialButton(
       color: Colors.blue,
-      child: Text(text, style: const TextStyle(color: Colors.white),),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.white),
+      ),
       onPressed: () {
         function();
       },
     );
   }
-
 }

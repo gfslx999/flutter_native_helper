@@ -1,4 +1,5 @@
 library flutter_native_hlper;
+
 export 'package:flutter_native_helper/flutter_native_constant.dart';
 export 'package:flutter_native_helper/model/system_ringtone_model.dart';
 
@@ -11,7 +12,6 @@ import 'package:flutter_native_helper/flutter_native_constant.dart';
 import 'package:flutter_native_helper/model/system_ringtone_model.dart';
 
 class FlutterNativeHelper {
-
   FlutterNativeHelper.internal();
 
   static FlutterNativeHelper get instance => _getInstance();
@@ -73,9 +73,7 @@ class FlutterNativeHelper {
   /// 安装apk，内部已处理 '允许应用内安装其他应用' 权限
   /// [filePath] 要安装的apk绝对路径
   Future<void> installApk(String filePath) async {
-    final arguments = <String, dynamic>{
-      "filePath": filePath
-    };
+    final arguments = <String, dynamic>{"filePath": filePath};
     await _channel.invokeMethod("installApk", arguments);
   }
 
@@ -118,12 +116,14 @@ class FlutterNativeHelper {
   /// 获取系统铃声/通知/警报列表
   ///
   /// [systemRingtoneType] 铃声类型，参见[FlutterNativeConstant]
-  Future<List<SystemRingtoneModel>> getSystemRingtoneList(int systemRingtoneType) async {
+  Future<List<SystemRingtoneModel>> getSystemRingtoneList(
+      int systemRingtoneType) async {
     final arguments = <String, dynamic>{
       "systemRingtoneType": systemRingtoneType
     };
     try {
-      final result = await _channel.invokeMethod("getSystemRingtoneList", arguments);
+      final result =
+          await _channel.invokeMethod("getSystemRingtoneList", arguments);
       List<dynamic> jsonArray = jsonDecode(result);
       return SystemRingtoneModel.fromJsonArray(jsonArray);
     } catch (e) {
@@ -135,9 +135,7 @@ class FlutterNativeHelper {
   /// 播放系统铃声/通知/警报，如为空则播放系统默认铃声
   Future<bool> playSystemRingtone({String? assignUri}) async {
     try {
-      var arguments = <String, dynamic>{
-        "assignUri": assignUri
-      };
+      var arguments = <String, dynamic>{"assignUri": assignUri};
       return await _channel.invokeMethod("playSystemRingtone", arguments);
     } catch (e) {
       debugPrint("playSystemRingtone.error: $e");
@@ -174,9 +172,7 @@ class FlutterNativeHelper {
       return "";
     }
     try {
-      var arguments = <String, dynamic>{
-        "targetUri": targetUri
-      };
+      var arguments = <String, dynamic>{"targetUri": targetUri};
       return await _channel.invokeMethod("transformUriToRealPath", arguments);
     } catch (e) {
       debugPrint("transformUriToRealPath.error: $e");
@@ -209,5 +205,4 @@ class FlutterNativeHelper {
   void disposeNativeListener() {
     _channel.setMethodCallHandler(null);
   }
-
 }
