@@ -184,6 +184,15 @@ class FlutterNativeHelper {
     }
   }
 
+  /// 进入应用设置详情页
+  Future<bool> intoAppSettingDetail() async {
+    try {
+      return await _channel.invokeMethod("intoAppSettingDetail") ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// 监听Native端发送的信息
   void setOnNativeListener({
     required String method,

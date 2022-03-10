@@ -33,7 +33,11 @@ class _MyAppState extends State<MyApp> {
         result: (progress) {
           if (progress is double) {
             if (progress < 100) {
-              EasyLoading.showProgress(progress / 100, status: "下载中");
+              String stringProgress = progress.toString();
+              if (stringProgress.length > 5) {
+                stringProgress = stringProgress.substring(0, 5);
+              }
+              EasyLoading.showProgress(progress / 100, status: "下载中 $stringProgress%");
             } else {
               EasyLoading.showSuccess("下载成功");
             }
@@ -69,20 +73,16 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Text('Running on: $_platformVersion\n'),
               _buildButton("下载并安装apk", () {
                 FlutterNativeHelper.instance.downloadAndInstallApk(
                     fileUrl: "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
                     fileDirectory: "updateApk",
                     fileName: "newApk.apk");
               }),
-              Text('Running on: $_platformVersion\n'),
-              _buildButton("开始播放", () async {
-                var playSystemRingtone = await FlutterNativeHelper.instance.playSystemRingtone(
-                    assignUri: _ringtoneModel?.ringtoneUri);
-              }),
-              _buildButton("暂停播放", () async {
-                var stopSystemRingtone = await FlutterNativeHelper.instance.stopSystemRingtone();
-                print("lxlx stopSystemRingtone: $stopSystemRingtone");
+              _buildButton('进入应用详情页', () async {
+                final intoResult = await FlutterNativeHelper.instance.intoAppSettingDetail();
+                debugPrint("intoResult: $intoResult");
               }),
               _buildButton("得到铃声列表", () async {
                 final List<SystemRingtoneModel> list = await FlutterNativeHelper.instance.getSystemRingtoneList(FlutterNativeConstant.systemRingtoneTypeNotification);
@@ -90,12 +90,6 @@ class _MyAppState extends State<MyApp> {
                   print("lxlx ringtoneTitle: ${value.ringtoneTitle}, ${value.ringtoneUri}");
                 }
                 _ringtoneModel = list[3];
-              }),
-              _buildButton("转换为真实路径", () async {
-                if (_ringtoneModel != null) {
-                  var realPath = await FlutterNativeHelper.instance.transformUriToRealPath(_ringtoneModel!.ringtoneUri);
-                  print("lxlx realPath: $realPath");
-                }
               }),
             ],
           ),

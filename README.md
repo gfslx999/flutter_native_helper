@@ -135,7 +135,7 @@ final List<SystemRingtoneModel> list = await FlutterNativeHelper.instance.getSys
 
 ```kotlin
 /// 如果出现异常，将返回空字符串
-final realPath = await FlutterNativeHelper.instance.transformUriToRealPath(String? targetUri);
+final String realPath = await FlutterNativeHelper.instance.transformUriToRealPath(String? targetUri);
 ```
 
 #### 2.控制设备震动
@@ -157,12 +157,18 @@ FlutterNativeHelper.instance.callPhoneToShake();
 /// 如果你想预下载apk或其他什么骚操作，可以根据此方法+installApk来完成
 /// 返回：文件的真实路径
 /// 如需获取下载进度，可参考 第一项第二小节
-final filePath = await FlutterNativeHelper.instance.downloadFile(fileUrl: "https://xxxx.apk",
+final String filePath = await FlutterNativeHelper.instance.downloadFile(fileUrl: "https://xxxx.apk",
     fileDirectory: "updateApk",
     fileName: "new.apk");
 ```
 
-#### 4.获取设备名称
+#### 4.进入应用设置详情页
+
+```kotlin
+final bool intoResult = await FlutterNativeHelper.instance.intoAppSettingDetail();
+```
+
+#### 5.获取设备名称
 
 ```kotlin
 final deviceName = await FlutterNativeHelper.instance.deviceName;

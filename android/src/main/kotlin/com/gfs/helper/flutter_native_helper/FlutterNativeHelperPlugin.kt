@@ -88,9 +88,28 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       "transformUriToRealPath" -> {
         transformUriToRealPath(arguments, result)
       }
+      "intoAppSettingDetail" -> {
+        intoAppSettingDetail(result)
+      }
       else -> {
         result.notImplemented()
       }
+    }
+  }
+
+  /**
+   * 进入应用设置详情页
+   */
+  private fun intoAppSettingDetail(result: Result) {
+    if (mActivity != null) {
+      val intoResult = AppHelper.intoAppSettingDetail(mActivity!!)
+      if (intoResult) {
+        result.success(true)
+      } else {
+        result.error("intoAppSettingDetail", "into detail failed", "")
+      }
+    } else {
+      result.error("intoAppSettingDetail", "mActivity is null, wait a moment", "")
     }
   }
 
