@@ -6,7 +6,9 @@
 * 获取系统铃声/通知/警报列表
 * 播放、暂停铃声/通知/警报
 
-[效果在这里](https://github.com/gfslx999/flutter_native_helper/blob/master/example/README.md)
+[English document](https://github.com/gfslx999/flutter_native_helper/blob/master/example/README.md)
+
+[效果在这里](https://github.com/gfslx999/flutter_native_helper/blob/master/example/PREVIEW.md)
 
 ## 安装
 
