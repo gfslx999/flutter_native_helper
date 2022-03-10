@@ -171,5 +171,5 @@ final bool intoResult = await FlutterNativeHelper.instance.intoAppSettingDetail(
 #### 5.获取设备名称
 
 ```kotlin
-final deviceName = await FlutterNativeHelper.instance.deviceName;
+final String deviceName = await FlutterNativeHelper.instance.deviceName;
 ```
