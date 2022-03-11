@@ -31,7 +31,7 @@ import 'package:flutter_native_helper/flutter_native_helper.dart';
 
 ## 配置
 
-在 `android - build.gradle`，找到: 
+### 1.在 `android - build.gradle`，找到: 
 ```kotlin
 
 ext.kotlin_version = '1.3.10'
@@ -43,8 +43,18 @@ ext.kotlin_version = '1.3.10'
 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10"
 
 ```
-
 将`1.3.10`修改为`1.5.20`
+
+### 2.在 `android - app - build.gradle` 找到
+```kotlin
+
+defaultConfig {
+    minSdkVersion flutter.minSdkVersion
+}
+
+```
+
+将 `flutter.minSdkVersion` 修改为 `21`
 
 ## 使用
 

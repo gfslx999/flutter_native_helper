@@ -43,8 +43,17 @@ or
 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10"
 
 ```
-
 Change `1.3.10` to `1.5.20`.
+
+### 2.In `android - app - build.gradle`
+```kotlin
+
+defaultConfig {
+    minSdkVersion flutter.minSdkVersion
+}
+
+```
+ `flutter.minSdkVersion` change to `21` .
 
 ## How to use
 
