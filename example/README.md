@@ -29,12 +29,81 @@ In the class you're going to use.
 import 'package:flutter_native_helper/flutter_native_helper.dart';
 ```
 
+## Setting
+
+In `android - build.gradle`，find: 
+```kotlin
+
+ext.kotlin_version = '1.3.10'
+
+```
+or
+```kotlin
+
+classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10"
+
+```
+
+Change `1.3.10` to `1.5.20`.
+
 ## How to use
 
 ### 一、 App installer
 
 Previously, it was not easy to perform the current in-app upgrade on the Flutter side. 
 But now, this will change - you can perform the in-app upgrade with only one line of code (no permissions concerns).
+
+Fro compatibility with Android 7.0 and above，**Need configuration FileProvider**.
+
+In `android - app - src - main - res`, create `xml` directory，
+And then, in `xml` create `file_provider_path.xml`，the file content is:
+
+```kotlin
+
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <root-path name="root" path="."/>
+    
+    <files-path
+    name="files"
+    path="."/>
+    
+    <cache-path
+    name="cache"
+    path="."/>
+    
+    <external-path
+    name="external"
+    path="."/>
+    
+    <external-cache-path
+    name="external_cache"
+    path="."/>
+    
+    <external-files-path
+    name="external_file"
+    path="."/>
+</paths>
+
+```
+Last，open `android - app - src - main - AndroidManifest.xml`，
+To the `application` label add：
+
+```kotlin
+
+<provider
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true"
+    android:name="androidx.core.content.FileProvider">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_provider_path" />
+</provider>
+
+```
+example：[example file](https://github.com/gfslx999/flutter_native_helper/blob/develop_v0.1/example/android/app/src/main/AndroidManifest.xml)
+
 
 #### 1. Download and install.
 

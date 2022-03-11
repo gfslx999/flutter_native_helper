@@ -29,11 +29,79 @@ dependencies:
 import 'package:flutter_native_helper/flutter_native_helper.dart';
 ```
 
+## 配置
+
+在 `android - build.gradle`，找到: 
+```kotlin
+
+ext.kotlin_version = '1.3.10'
+
+```
+或
+```kotlin
+
+classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10"
+
+```
+
+将`1.3.10`修改为`1.5.20`
+
 ## 使用
 
 ### 一、 应用内升级
 
 在之前，想要完成当前应用内升级，在Flutter端是不太便捷的事情，但现在，它将改变- 你只需要一行代码，即可完成应用内升级(无需关注权限问题)
+
+为了兼容Android 7.0及以上，**需要配置FileProvider**.
+
+在 `android - app - src - main - res` 下，新建 `xml` 文件夹，
+随后在 `xml` 内新建 `file_provider_path.xml` 文件，内容如下: 
+
+```kotlin
+
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <root-path name="root" path="."/>
+    
+    <files-path
+    name="files"
+    path="."/>
+    
+    <cache-path
+    name="cache"
+    path="."/>
+    
+    <external-path
+    name="external"
+    path="."/>
+    
+    <external-cache-path
+    name="external_cache"
+    path="."/>
+    
+    <external-files-path
+    name="external_file"
+    path="."/>
+</paths>
+
+```
+最后，打开 `android - app - src - main - AndroidManifest.xml` 文件，
+在 `application` 标签下添加：
+
+```kotlin
+
+<provider
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true"
+    android:name="androidx.core.content.FileProvider">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_provider_path" />
+</provider>
+
+```
+示例：[示例文件](https://github.com/gfslx999/flutter_native_helper/blob/develop_v0.1/example/android/app/src/main/AndroidManifest.xml)
 
 #### 1. 下载并安装
 
