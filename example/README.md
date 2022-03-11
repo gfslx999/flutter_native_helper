@@ -14,7 +14,7 @@ Provides functions to the Flutter, from Android：
 
 In pubspec.yaml.
 
-Latest version: [Latest version](https://pub.flutter-io.cn/packages/flutter_native_helper/install)
+latestVersion: [latestVersion](https://pub.flutter-io.cn/packages/flutter_native_helper/install)
 
 ```kotlin
 dependencies:

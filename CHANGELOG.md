@@ -12,3 +12,8 @@
 
 * 添加 - 进入应用设置详情页 (Add - Go to the App Settings details page.)
 * 添加 - 英文文档 (Add - English document.)
+
+## 0.0.4
+
+* 修复 - 远程仓库引起的异常问题 (Fix - Exception problem caused by remote warehouse.)
+* 更新 - App installer 文档 (Update - AppInstaller document.)

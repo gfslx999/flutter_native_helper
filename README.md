@@ -14,11 +14,11 @@
 
 在 pubspec.yaml 内.
 
-最新版本请查看: [最新版本](https://pub.flutter-io.cn/packages/flutter_native_helper/install)
+latestVersion: [latestVersion](https://pub.flutter-io.cn/packages/flutter_native_helper/install)
 
 ```kotlin
 dependencies:
-  flutter_native_helper: ^$lastVersion
+  flutter_native_helper: ^$latestVersion
 ```
 
 ## 导入
