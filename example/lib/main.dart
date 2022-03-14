@@ -21,17 +21,23 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
 
-  SystemRingtoneModel? _ringtoneModel;
+  String _cancelTag = "";
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    listenNativeMessage();
+  }
 
-    FlutterNativeHelper.instance.setOnNativeListener(
-        method: FlutterNativeConstant.methodDownloadProgress,
-        result: (progress) {
-          if (progress is double) {
+  /// 监听 Native 端发送的信息
+  void listenNativeMessage() {
+    FlutterNativeHelper.instance.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case FlutterNativeConstant.methodDownloadProgress :
+          //获取下载进度
+          if (call.arguments is double) {
+            final progress = call.arguments as double;
             if (progress < 100) {
               String stringProgress = progress.toString();
               if (stringProgress.length > 5) {
@@ -43,7 +49,16 @@ class _MyAppState extends State<MyApp> {
               EasyLoading.showSuccess("下载成功");
             }
           }
-        });
+          break;
+
+        case FlutterNativeConstant.methodCancelTag:
+          //得到 cancelTag
+          if (call.arguments is String) {
+            _cancelTag = call.arguments as String;
+          }
+          break;
+      }
+    });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -76,11 +91,18 @@ class _MyAppState extends State<MyApp> {
             children: [
               Text('Running on: $_platformVersion\n'),
               _buildButton("下载并安装apk", () {
+                EasyLoading.show(status: "开始下载");
                 FlutterNativeHelper.instance.downloadAndInstallApk(
                     fileUrl:
                         "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
                     fileDirectory: "updateApk",
                     fileName: "newApk.apk");
+              }),
+              _buildButton("取消下载", () async {
+                if (_cancelTag.isNotEmpty) {
+                  await FlutterNativeHelper.instance.cancelDownload(_cancelTag);
+                  EasyLoading.dismiss();
+                }
               }),
               _buildButton('进入应用详情页', () async {
                 final intoResult =
@@ -95,7 +117,6 @@ class _MyAppState extends State<MyApp> {
                   print(
                       "lxlx ringtoneTitle: ${value.ringtoneTitle}, ${value.ringtoneUri}");
                 }
-                _ringtoneModel = list[3];
               }),
             ],
           ),
@@ -116,4 +137,11 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
+
+  @override
+  void dispose() {
+    FlutterNativeHelper.instance.dispose();
+    super.dispose();
+  }
+
 }

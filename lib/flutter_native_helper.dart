@@ -54,7 +54,7 @@ class FlutterNativeHelper {
   /// 下载并安装apk ～ 一条龙服务
   ///
   /// 注意：此方法没有成功回调，即不需要异步等待
-  /// 参数注释参见 [downloadFile]
+  /// 注释参见 [downloadFile]
   void downloadAndInstallApk({
     required String fileUrl,
     required String fileDirectory,
@@ -83,6 +83,8 @@ class FlutterNativeHelper {
   /// [fileDirectory] 在沙盒目录下的文件夹路径
   /// [fileName] 文件名称，示例：newApk.apk(注意要拼接后缀.apk或.xxx)，无需传递 '/'
   /// [isDeleteOriginalFile] 如果本地存在相同文件，是否删除已存在文件，默认为true
+  /// [onCancelTagListener] 回调用于取消下载请求的 tag
+  /// [onProgressListener] 回调下载进度
   ///
   /// 关于 [fileDirectory]、[fileName] 的说明
   /// 如沙盒目录为：/data/user/0/com.xxxxx.flutter_native_helper_example/files
@@ -91,8 +93,10 @@ class FlutterNativeHelper {
   /// 即你无需关心反斜杠拼接，如果 [fileDirectory] 想要为两级，那就为 'updateApk/second'，
   /// 最终路径就为：/data/user/0/com.xxxxx.flutter_native_helper_example/files/updateApk/second/new.apk
   ///
-  /// 如需获取下载进度回调，调用[setOnNativeListener]，method为 [FlutterNativeConstant.methodDownloadProgress]，
+  /// 如需获取下载进度回调，调用[setMethodCallHandler]，method为 [FlutterNativeConstant.methodDownloadProgress]，
   /// 回调值为 'double' 类型
+  ///
+  /// 注意⚠️：如连续重复调用此方法，Native 端会进行拦截，如需取消下载中的任务，调用 [cancelDownload]
   Future<String> downloadFile({
     required String fileUrl,
     required String fileDirectory,
@@ -111,6 +115,17 @@ class FlutterNativeHelper {
       debugPrint("downloadFile.error: $e");
       return "";
     }
+  }
+
+  /// 取消下载
+  ///
+  /// [cancelTag] 调用下载方法前，监听 Android 端发送信息即可，
+  /// 调用 [setMethodCallHandler]，'method': [FlutterNativeConstant.methodCancelTag]
+  Future<void> cancelDownload(String cancelTag) async {
+    final arguments = <String, dynamic>{
+      "cancelTag": cancelTag
+    };
+    await _channel.invokeMethod("cancelDownload", arguments);
   }
 
   /// 获取系统铃声/通知/警报列表
@@ -189,20 +204,13 @@ class FlutterNativeHelper {
     }
   }
 
-  /// 监听Native端发送的信息
-  void setOnNativeListener({
-    required String method,
-    required Function(dynamic) result,
-  }) {
-    _channel.setMethodCallHandler((call) async {
-      if (call.method == method && call.arguments != null) {
-        result(call.arguments);
-      }
-    });
+  /// 监听 Native 端发送的信息
+  void setMethodCallHandler(Future<dynamic> Function(MethodCall call)? handler) {
+    _channel.setMethodCallHandler(handler);
   }
 
-  /// 销毁对 Native 端的监听
-  void disposeNativeListener() {
+  /// 销毁
+  void dispose() {
     _channel.setMethodCallHandler(null);
   }
 }

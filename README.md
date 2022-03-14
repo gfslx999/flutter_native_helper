@@ -45,17 +45,6 @@ classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10"
 ```
 将`1.3.10`修改为`1.5.20`
 
-### 2.在 `android - app - build.gradle` 找到
-```kotlin
-
-defaultConfig {
-    minSdkVersion flutter.minSdkVersion
-}
-
-```
-
-将 `flutter.minSdkVersion` 修改为 `21`
-
 ## 使用
 
 ### 一、 应用内升级
@@ -111,7 +100,7 @@ defaultConfig {
 </provider>
 
 ```
-示例：[示例文件](https://github.com/gfslx999/flutter_native_helper/blob/develop_v0.1/example/android/app/src/main/AndroidManifest.xml)
+示例：[示例文件](https://github.com/gfslx999/flutter_native_helper/blob/master/example/android/app/src/main/AndroidManifest.xml)
 
 #### 1. 下载并安装
 
@@ -120,10 +109,13 @@ defaultConfig {
 /// 这个示例最终生成的文件路径就是 '/data/user/0/$applicationPackageName/files/updateApk/new.apk'
 /// 如果我想指定两层目录怎么办呢，很简单，只需要将 [fileDirectory] 设置为 'updateApk/second'
 /// 那么他就会生成 '/data/user/0/$applicationPackageName/files/updateApk/second/new.apk'
+///
+/// 如果，连续多次调用此方法，并且三个参数为完全相同的，那么 Native 端将等待第一个下载完成后才允许继续下载。
 FlutterNativeHelper.instance.downloadAndInstallApk(
     fileUrl: "https://xxxx.apk",
 fileDirectory: "updateApk",
 fileName: "new.apk");
+
 ```
 
 | 参数名称 | 参数意义 | 是否必传 |
@@ -135,26 +127,32 @@ fileName: "new.apk");
 
 #### 2.获取下载apk进度
 
+建议[参考](https://github.com/gfslx999/flutter_native_helper/blob/master/example/lib/main.dart)
 ```kotlin
+
 ///在initState中调用
-///
-///progress 为 0~100, double类型
-///用完之后记得在dispose中调用 'FlutterNativeHelper.instance.disposeNativeListener();'
-FlutterNativeHelper.instance.setOnNativeListener(
-    method: FlutterNativeConstant.methodDownloadProgress,
-    result: (progress) {
-        if (progress is double) {
-            if (progress < 100) {
-                EasyLoading.showProgress(progress / 100, status: "下载中");
-            } else {
-                EasyLoading.showSuccess("下载成功");
-            }
+FlutterNativeHelper.instance.setMethodCallHandler((call) async {
+    if (call.method == FlutterNativeConstant.methodDownloadProgress) {
+        if (call.argument is String) {
+            final cancelTag = call.argument as String;
         }
     }
-);
+});
+
 ```
 
-#### 3. 仅安装
+#### 3.取消下载
+
+建议[参考](https://github.com/gfslx999/flutter_native_helper/blob/master/example/lib/main.dart)
+```kotlin
+
+/// [cancelTag] 在 'initState' 中：
+/// 调用 [FlutterNativeHelper.instance.setMethodCallHandler]，'method': [FlutterNativeConstant.methodCancelTag]，
+FlutterNativeHelper.instance.cancelDownload(cancelTag: "$_cancelTag");
+
+```
+
+#### 4.仅安装
 
 ```kotlin
 /// [filePath] apk文件地址，必传
@@ -237,6 +235,8 @@ FlutterNativeHelper.instance.callPhoneToShake();
 /// 如果你想预下载apk或其他什么骚操作，可以根据此方法+installApk来完成
 /// 返回：文件的真实路径
 /// 如需获取下载进度，可参考 第一项第二小节
+/// 
+/// 如果，连续多次调用此方法，并且三个参数为完全相同的，那么 Native 端将等待第一个下载完成后才允许继续下载。
 final String filePath = await FlutterNativeHelper.instance.downloadFile(fileUrl: "https://xxxx.apk",
     fileDirectory: "updateApk",
     fileName: "new.apk");

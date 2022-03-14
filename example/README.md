@@ -45,16 +45,6 @@ classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10"
 ```
 Change `1.3.10` to `1.5.20`.
 
-### 2.In `android - app - build.gradle`
-```kotlin
-
-defaultConfig {
-    minSdkVersion flutter.minSdkVersion
-}
-
-```
- `flutter.minSdkVersion` change to `21` .
-
 ## How to use
 
 ### 一、 App installer
@@ -111,7 +101,7 @@ To the `application` label add：
 </provider>
 
 ```
-example：[example file](https://github.com/gfslx999/flutter_native_helper/blob/develop_v0.1/example/android/app/src/main/AndroidManifest.xml)
+example：[example file](https://github.com/gfslx999/flutter_native_helper/blob/master/example/android/app/src/main/AndroidManifest.xml)
 
 
 #### 1. Download and install.
@@ -135,28 +125,35 @@ fileName: "new.apk");
 | fileName | File name (no concatenation backslash required) | yes |
 | isDeleteOriginalFile | Whether to delete the same file if it already exists on the local PC (default:true)) | no |
 
+
 #### 2.Get download progress.
 
+Suggest reference: [example](https://github.com/gfslx999/flutter_native_helper/blob/master/example/lib/main.dart)
 ```kotlin
-///In initState
-///
-///progress is 0~100, is double type
-///Remember in dispose, call it:  'FlutterNativeHelper.instance.disposeNativeListener();'
-FlutterNativeHelper.instance.setOnNativeListener(
-    method: FlutterNativeConstant.methodDownloadProgress,
-    result: (progress) {
-        if (progress is double) {
-            if (progress < 100) {
-                EasyLoading.showProgress(progress / 100, status: "Downloading");
-            } else {
-                EasyLoading.showSuccess("Download success");
-            }
+
+///In initState.
+FlutterNativeHelper.instance.setMethodCallHandler((call) async {
+    if (call.method == FlutterNativeConstant.methodDownloadProgress) {
+        if (call.argument is String) {
+            final cancelTag = call.argument as String;
         }
     }
-);
+});
+
 ```
 
-#### 3. Only install.
+#### 3.Cancel downloading task.
+
+Suggest reference: [example](https://github.com/gfslx999/flutter_native_helper/blob/master/example/lib/main.dart)
+```kotlin
+
+/// [cancelTag] In 'initState'：
+/// call [FlutterNativeHelper.instance.setMethodCallHandler]，'method': [FlutterNativeConstant.methodCancelTag]，
+FlutterNativeHelper.instance.cancelDownload(cancelTag: "$_cancelTag");
+
+```
+
+#### 4. Only install.
 
 ```kotlin
 FlutterNativeHelper.instance.installApk(

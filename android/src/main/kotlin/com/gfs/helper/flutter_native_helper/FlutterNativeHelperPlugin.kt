@@ -7,7 +7,6 @@ import androidx.lifecycle.*
 import com.fs.freedom.basic.helper.*
 import com.fs.freedom.basic.listener.CommonResultListener
 import com.fs.freedom.basic.model.SystemRingtoneModel
-import com.fs.freedom.basic.util.ToastUtil
 import com.gfs.helper.flutter_native_helper.comments.CustomLifecycleObserver
 import com.gfs.helper.flutter_native_helper.comments.InstallApkState
 import com.gfs.helper.flutter_native_helper.model.InstallApkModel
@@ -72,6 +71,9 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       }
       "downloadAndInstallApk" -> {
         downloadAndInstallApk(arguments, result)
+      }
+      "cancelDownload" -> {
+        cancelDownload(arguments, result)
       }
       "playSystemRingtone" -> {
         playSystemRingtone(arguments, result)
@@ -217,6 +219,9 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       fileName = fileName,
       isDeleteOriginalFile = isDeleteOriginalFile,
       commonResultListener = object : CommonResultListener<File> {
+        override fun onStart(attachParam: Any?) {
+          resultCancelTag(attachParam)
+        }
         override fun onSuccess(file: File) {
           result.success(file.absolutePath)
         }
@@ -226,7 +231,7 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         }
 
         override fun onProgress(currentProgress: Float) {
-          updateDownloadProgress(currentProgress)
+          resultDownloadProgress(currentProgress)
         }
       }
     )
@@ -254,7 +259,8 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       fileName = fileName,
       isDeleteOriginalFile = isDeleteOriginalFile,
       commonResultListener = object :CommonResultListener<File> {
-        override fun onStart() {
+        override fun onStart(attachParam: Any?) {
+          resultCancelTag(attachParam)
           mInstallApkModel.isIntoOpenPermissionPage = false
         }
 
@@ -267,17 +273,23 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         }
 
         override fun onProgress(currentProgress: Float) {
-          updateDownloadProgress(currentProgress)
+          resultDownloadProgress(currentProgress)
         }
       }
     )
   }
 
   /**
-   * 更新下载进度
+   * 取消下载
    */
-  private fun updateDownloadProgress(progress: Float) {
-    mChannel.invokeMethod("resultDownloadProgress", progress)
+  private fun cancelDownload(arguments: Map<*, *>?, result: Result?) {
+    val cancelTag = arguments?.get("cancelTag") as String? ?: ""
+    if (cancelTag.isEmpty()) {
+      result?.error("cancelDownload", "cancelTag is must not be null!", "")
+      return
+    }
+    DownloadHelper.cancelDownload(cancelTag)
+    result?.success(true)
   }
 
   /**
@@ -292,7 +304,7 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         currentState = InstallApkState.INSTALL
       )
       SystemHelper.installApk(mActivity, apkFile = File(filePath), commonResultListener = object : CommonResultListener<File>{
-        override fun onStart() {
+        override fun onStart(attachParam: Any?) {
           mInstallApkModel.isIntoOpenPermissionPage = false
         }
         override fun onError(message: String) {
@@ -306,6 +318,26 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       })
     } else {
       result?.error("0", "installApk：file path can't be empty!", "")
+    }
+  }
+
+  /**
+   * =============================== Android send to Flutter ===============================
+   */
+
+  /**
+   * 回调下载进度
+   */
+  private fun resultDownloadProgress(progress: Float) {
+    mChannel.invokeMethod("resultDownloadProgress", progress)
+  }
+
+  /**
+   * 回调用于取消下载的 cancelTag
+   */
+  private fun resultCancelTag(attachParam: Any?) {
+    if (attachParam is String && attachParam.isNotEmpty()) {
+      mChannel.invokeMethod("resultCancelTag", attachParam)
     }
   }
 
