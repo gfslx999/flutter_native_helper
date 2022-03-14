@@ -17,3 +17,8 @@
 
 * 修复 - 远程仓库引起的异常问题 (Fix - Exception problem caused by remote warehouse.)
 * 更新 - App installer 文档 (Update - AppInstaller document.)
+
+## 0.0.5
+
+* 添加 - 连续下载同一文件逻辑处理 (Add - Sequential downloading of the same file logic processing.)
+* 添加 - 取消下载中任务API (Add - Cancel downloading file api.)

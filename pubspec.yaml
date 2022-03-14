@@ -1,6 +1,6 @@
 name: flutter_native_helper
 description: Provides functions to the Flutter, from Android：Easy app installer、Get systemRingtone、Play systemRingtone.
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/gfslx999/flutter_native_helper
 
 environment:
