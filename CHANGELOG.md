@@ -22,3 +22,7 @@
 
 * 添加 - 连续下载同一文件逻辑处理 (Add - Sequential downloading of the same file logic processing.)
 * 添加 - 取消下载中任务API (Add - Cancel downloading file api.)
+
+## 0.0.5
+
+* 添加 - 打开应用市场-当前应用详情页 (Add - Open App Marketplace - Current App Details page.)

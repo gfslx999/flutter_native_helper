@@ -161,6 +161,18 @@ FlutterNativeHelper.instance.installApk(
 );
 ```
 
+#### 5.打开应用市场当前详情页
+
+简单来说，如果你有指定的应用市场，就传递 'targetMarketPackageName' 为对应的包名；
+如果你没有指定的应用市场，但是想让大部分机型都打开厂商应用商店，那么就设置 'isOpenSystemMarket' 为true
+
+```kotlin
+FlutterNativeHelper.instance.openAppMarket(
+    targetMarketPackageName: "$targetPackageName", //指定的应用市场包名，默认为空
+    isOpenSystemMarket: true //如果未指定包名，是否要打开系统自带-应用市场，默认为true
+);
+```
+
 ### 二、控制手机发出通知、铃声
 
 #### 1.播放通知、铃声

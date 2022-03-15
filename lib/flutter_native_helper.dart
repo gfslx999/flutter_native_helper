@@ -5,6 +5,7 @@ export 'package:flutter_native_helper/model/system_ringtone_model.dart';
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -77,6 +78,32 @@ class FlutterNativeHelper {
     await _channel.invokeMethod("installApk", arguments);
   }
 
+  /// 打开应用市场-当前应用页面
+  ///
+  /// [targetMarketPackageName] 指定应用市场包名
+  /// [isOpenSystemMarket] 如 'targetMarketPackageName' 为空，是否打开本机自带应用市场，
+  ///
+  /// 简单来说，如果你有指定的应用市场，就传递 'targetMarketPackageName' 为对应的包名；
+  /// 如果你没有指定的应用市场，但是想让大部分机型都打开厂商应用商店，那么就设置 'isOpenSystemMarket' 为true
+  Future<bool> openAppMarket(
+      {String targetMarketPackageName = "",
+      bool isOpenSystemMarket = true}) async {
+    final arguments = <String, dynamic>{
+      "targetMarketPackageName": targetMarketPackageName,
+      "isOpenSystemMarket": isOpenSystemMarket,
+    };
+    try {
+      final result = await _channel.invokeMethod("openAppMarket", arguments);
+      if (result is bool) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("openAppMarket: $e");
+      return false;
+    }
+  }
+
   /// 下载文件到⚠️沙盒目录下（仅能下载到沙盒目录下）
   ///
   /// [fileUrl] 文件远程地址
@@ -122,9 +149,7 @@ class FlutterNativeHelper {
   /// [cancelTag] 调用下载方法前，监听 Android 端发送信息即可，
   /// 调用 [setMethodCallHandler]，'method': [FlutterNativeConstant.methodCancelTag]
   Future<void> cancelDownload(String cancelTag) async {
-    final arguments = <String, dynamic>{
-      "cancelTag": cancelTag
-    };
+    final arguments = <String, dynamic>{"cancelTag": cancelTag};
     await _channel.invokeMethod("cancelDownload", arguments);
   }
 
@@ -205,7 +230,8 @@ class FlutterNativeHelper {
   }
 
   /// 监听 Native 端发送的信息
-  void setMethodCallHandler(Future<dynamic> Function(MethodCall call)? handler) {
+  void setMethodCallHandler(
+      Future<dynamic> Function(MethodCall call)? handler) {
     _channel.setMethodCallHandler(handler);
   }
 

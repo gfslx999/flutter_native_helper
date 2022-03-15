@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
   void listenNativeMessage() {
     FlutterNativeHelper.instance.setMethodCallHandler((call) async {
       switch (call.method) {
-        case FlutterNativeConstant.methodDownloadProgress :
+        case FlutterNativeConstant.methodDownloadProgress:
           //获取下载进度
           if (call.arguments is double) {
             final progress = call.arguments as double;
@@ -50,7 +50,6 @@ class _MyAppState extends State<MyApp> {
             }
           }
           break;
-
         case FlutterNativeConstant.methodCancelTag:
           //得到 cancelTag
           if (call.arguments is String) {
@@ -104,10 +103,11 @@ class _MyAppState extends State<MyApp> {
                   EasyLoading.dismiss();
                 }
               }),
-              _buildButton('进入应用详情页', () async {
-                final intoResult =
-                    await FlutterNativeHelper.instance.intoAppSettingDetail();
-                debugPrint("intoResult: $intoResult");
+              _buildButton('打开应用市场', () async {
+                FlutterNativeHelper.instance.openAppMarket(
+                  targetMarketPackageName: "$targetPackageName",
+                  isOpenSystemMarket: true
+                );
               }),
               _buildButton("得到铃声列表", () async {
                 final List<SystemRingtoneModel> list =
@@ -143,5 +143,4 @@ class _MyAppState extends State<MyApp> {
     FlutterNativeHelper.instance.dispose();
     super.dispose();
   }
-
 }

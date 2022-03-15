@@ -161,6 +161,20 @@ FlutterNativeHelper.instance.installApk(
 );
 ```
 
+#### 5.Go to the App Market Current details page.
+
+In simple terms, if you have a specified app marketplace, pass 'targetMarketPackageName' as the package name;
+If you don't specify a market, but want the manufacturer's store open on most devices, set 'isOpenSystemMarket' to true.
+
+```kotlin
+/// [targetMarketPackageName] Specifies the name of the application market package, which is empty by default.
+/// [isOpenSystemMarket] If the package name is not specified, determine whether to open the built-in application market. The default value is true.
+FlutterNativeHelper.instance.openAppMarket(
+    targetMarketPackageName: "$targetPackageName",
+    isOpenSystemMarket: true 
+);
+```
+
 ### 二、SystemRingtone.
 
 #### 1.Play system ringtone、notification.

@@ -93,6 +93,9 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       "intoAppSettingDetail" -> {
         intoAppSettingDetail(result)
       }
+      "openAppMarket" -> {
+        openAppMarket(arguments, result)
+      }
       else -> {
         result.notImplemented()
       }
@@ -112,6 +115,25 @@ class FlutterNativeHelperPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
       }
     } else {
       result.error("intoAppSettingDetail", "mActivity is null, wait a moment", "")
+    }
+  }
+
+  /**
+   * 打开应用市场-当前应用详情页
+   */
+  private fun openAppMarket(arguments: Map<*, *>?, result: Result) {
+    val targetMarketPackageName = arguments?.get("targetMarketPackageName") as String? ?: ""
+    val isOpenSystemMarket = arguments?.get("isOpenSystemMarket") as Boolean? ?: true
+    val openResult = AppHelper.openAppMarket(
+      mActivity,
+      targetMarketPackageName = targetMarketPackageName,
+      isOpenSystemMarket = isOpenSystemMarket
+    )
+
+    if (openResult) {
+      result.success(true)
+    } else {
+      result.error("openAppMarket", "open market failed!", "")
     }
   }
 
