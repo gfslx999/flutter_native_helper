@@ -10,6 +10,8 @@
 
 [效果在这里](https://github.com/gfslx999/flutter_native_helper/blob/master/example/PREVIEW.md)
 
+## 当前插件已经停止对应用内升级相关功能的更新，请移步到：[easy_app_installer](https://pub.flutter-io.cn/packages/easy_app_installer)
+
 ## 安装
 
 在 pubspec.yaml 内.

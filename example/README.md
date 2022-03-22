@@ -10,6 +10,9 @@ Provides functions to the Flutter, from Android：
 
 [Preview GIF](https://github.com/gfslx999/flutter_native_helper/blob/master/example/PREVIEW.md)
 
+## The current plug-in has stopped updating the functions related to the in-app upgrade,
+## Use is for in-app upgrades: [easy_app_installer](https://pub.flutter-io.cn/packages/easy_app_installer)
+
 ## Installing
 
 In pubspec.yaml.

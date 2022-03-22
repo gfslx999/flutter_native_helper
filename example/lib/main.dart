@@ -92,8 +92,7 @@ class _MyAppState extends State<MyApp> {
               _buildButton("下载并安装apk", () {
                 EasyLoading.show(status: "开始下载");
                 FlutterNativeHelper.instance.downloadAndInstallApk(
-                    fileUrl:
-                        "https://hipos.oss-cn-shanghai.aliyuncs.com/hipos-kds-v.5.10.031-g.apk",
+                    fileUrl: "https://xxxxx.apk",
                     fileDirectory: "updateApk",
                     fileName: "newApk.apk");
               }),
@@ -103,12 +102,7 @@ class _MyAppState extends State<MyApp> {
                   EasyLoading.dismiss();
                 }
               }),
-              _buildButton('打开应用市场', () async {
-                FlutterNativeHelper.instance.openAppMarket(
-                  targetMarketPackageName: "$targetPackageName",
-                  isOpenSystemMarket: true
-                );
-              }),
+              _buildButton('打开应用市场', () async {}),
               _buildButton("得到铃声列表", () async {
                 final List<SystemRingtoneModel> list =
                     await FlutterNativeHelper.instance.getSystemRingtoneList(
